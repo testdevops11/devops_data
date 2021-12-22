@@ -1,0 +1,97 @@
+Summary for the 16th Dec - Ansible 
+
+Defining Variables:
+- 1. Inventory files - Host variable
+- 2. Inventory file - Group variable
+- 3. Playbook -------> top level global declaration before tasks
+- 4. Playbook -------> Inside task
+- 5. Register variable ==> storing some value to variable
+- 6. Use loops - while -> inside playbook.
+- 7. On command line while executing the playbook. 
+- 8. Can be defined using external files - file should be created under the same directory where we are running the ansible.
+
+Note: Variable name can be random. But you have to avoid predefined paterns like add format centre split--> predefined. 
+
+Note2:While defining the variables Command line has least priority of all. 
+
+--> Perform task:
+
+1.Create the directory:
+
+$ mkdir -p  ansible-training/variable-playbook
+
+2. Create Files:
+
+$ touch file_vars.yaml
+$ touch include_var.yaml
+$ touch inventory
+$ touch playbook.yaml
+
+3. Update the inventory with file content:
+
+$ cat inventory
+
+[web]
+ip-172-31-46-241
+
+[db]
+ip-172-31-25-186
+
+4. Create the ansible-playbook.
+
+- hosts: all
+  gather_facts: no
+  vars:
+          play_var: "PLAY Variable"
+  vars_files:
+          - file_vars.yaml
+  tasks:
+          - set_fact:
+                  task_var: "TASK VARIABLE"
+          - include_vars: include_var.yaml
+          - debug:
+                  msg:
+                          - "{{ play_var }}"
+                          - "{{ task_var }}"
+                          - "{{ include1 }}"
+                            # - "{{ web_var }}"
+                            # - "{{ app_vars }}"
+                          - "{{ cmd_line_var }}"
+                          - "{{ file1 }}"
+
+
+ 5. Update file_var:
+
+$ cat file_vars.yaml
+file1: var1
+file2: var2
+
+6. Update include_var.yaml:
+
+$ cat include_var.yaml
+include1: var1
+include2: var2
+
+7. Updating the inventory file:
+
+$ cat inventory
+
+[web]
+ip-172-31-46-241 http_port=80
+
+[db]
+ip-172-31-25-186 http_port=80
+
+[app]
+web
+db
+
+[app:vars]
+app1=var1	
+
+8. Run the ansible command:
+
+$ ansible-playbook playbook.yaml -i inventory -e "cmd_line_var='Command line variable'"
+
+
+

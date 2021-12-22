@@ -1,0 +1,112 @@
+Course Agenda:
+
+- Introduction to Kubernetes
+
+- Docker Swarm vs Kubernetes
+
+- Kubernetes Architecture
+
+- Deploying Kubernetes using Kubeadms
+
+- Alternate ways of deploying Kubernetes
+
+- Creating a Deployment in Kubernetes using YAML
+
+- Services in Kubernetes
+
+- Ingress in Kubernetes
+
+- Case Study – Kubernetes Architecture
+
+Exercise
+
+1. Setting up Kubernetes using kubeadm
+2. Installing Kubernetes using kops and GCK
+3. Creating a Deployment
+4. Creating Services
+5. Creating an Ingress
+6. Demonstrating the use of Ingress, services and deployments together
+
+================================================================
+
+Kubernetes Day1 - 16th Dec
+
+
+1. Introduction:
+
+--> What is the orchestration tool? why we need it.
+
+--> WHAT IS KUBERNETES:
+
+1. Opensource tool , Managed by CNCF - it manages containers( pod ) which we call as resources and it is autonomus in nature - It has self healing capabilites.
+
+---> Overview of kubernetes architecture.
+
+1. what is pod ==> 
+pod is smallest entity in kubernetes.
+pod is nothing but container or group of container having the same motive.
+Single container if deployed inside kubernetes cluster will still be called pod.
+
+Kubernetes Overview:
+1. It can be divided into two parts: a. Control plane
+                                     b Worker plane
+
+
+ 2. What is control plane ? 
+
+ - Control plane is the set of nodes - who wil be responsible to manage the cluster.
+
+ - cluster is set of nodes which are running together to provide an orchestration.
+
+ - Control plane is accessed by cluster user like admin and is not accisible to the end application user.
+
+ -Kubernetes uses api calls for communication between user and cluster.
+
+
+===========> 1. Apiserver ==> To respond to the api get calls raised by client.
+
+                          ==> authorisation and authintacation
+
+                          1. authentication ==> is the user part of cluster? 
+                          2. autherisation ==> How much access level should be given to the user who is requesting the information. for ex: admins will get all the cluster info, and developer may only get project level information
+
+============> 2. ETCD  ==> an opensource project - database 
+                       ---> key: value format.
+                       ===> big opensource database project.
+                       ==> High availability
+
+=============> 3. Scheduler ==> To schedule pods on different nodes. --> based on some parameters
+
+                            ===> modify the way scheduler schedules pods
+
+==============> 4. Controller  => To check and perform self healing or gather cluster information at every  stage every moment.
+
+                               ==> Many controllers ==> for eg: replication controllers.
+
+==============> 5. Kube-proxy ==> Networking component available on each node ==> respomsible for providing                         network to the pod/cluster infrastructure.
+
+=============> 6. Kubelet ==> responsible for managing the container on node.
+
+
+
+3. 2. What is Worker plane ? 
+
+ ==> set of nodes/machines which will run the application workloads--> application pods will be run on this nodes.
+
+==============> 1. Kube-proxy ==> Networking component available on each node ==> respomsible for providing                         network to the pod/cluster infrastructure.
+
+==============> 2.  Kubelet ==> responsible for managing the container on node.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

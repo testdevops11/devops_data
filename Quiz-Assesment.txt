@@ -1,0 +1,242 @@
+1. What is the practice of releasing your new code to production commonly known as?  answer:c
+ 
+1.Continuous Integration
+2.Continuous Delivery
+3.Continuous Deployment
+4.Infrastructure as Code
+
+2. Where does details of a build can be available ?  answer: b
+
+a) Build histrory
+
+b) Console Output
+
+c) Dashboard
+
+d) Settings
+
+
+3. what is the use of fork in GIT?  answer:c
+
+a) used to view changes in public repository
+
+b) trigger changes
+
+c) creates personal copy of respository for making changes
+
+d) to checkout repository
+
+
+4. What is Jenkins ?    answer:C
+
+a) Continuous integration tool
+
+b) Continuous delivery tool
+
+c) Option A and B
+
+d) None of the above
+
+5.What is JIRA?   answer:3
+
+1.Business Requirement documentation
+2.Scrum and Kanban
+3.Issue and project tracking tool
+4.Agile Reporting tool
+
+
+6.Who can create issues in JIRA?  answer:4
+
+1.Users
+2.Developers
+3.Admins
+4. All of above
+
+7. Which of the following is not an issue type? answer: 3
+
+1.Task
+2.User Story
+3.Minor
+4.Epic
+
+8.The markup language used to write Docker configuration files is:     answer:2
+
+1.JSON
+2.YAML
+3.XML
+4.HTML
+
+9. What happens if you attempt to perform a Docker build based on an image that has not been previously referenced on your machine?   answer:4
+
+1.Docker will return a 408: image not found message.
+2.Docker will return a 404: file not found message.
+3.Docker will pull the image from GitHub.
+4.Docker will pull the image from Docker Hub.
+
+10.Information on how to build a Docker image is written in a file named:        answer:1
+
+1.Dockerfile
+2.Jenkinsfile
+3.docker-compose
+4.dockerimage
+
+
+11.Which of the following statements is most correct?
+answer choices      answer:2
+
+1.Docker allows you to run images and build containers.
+2.Docker allows you to run containers and build images.
+3.Docker allows you to run and build containers.
+4.Docker allows you to run and build images.
+
+12.Docker container is often described as an improvement over what other technology?
+
+answer:3
+
+1.Cloud Computing
+2.Devops
+3.virtual machines
+4.microservices  answer:
+
+13.Which Configuration Management Solution is Agent less ? 
+
+answer:1
+
+1.Ansible
+2.Chef
+3.Puppet
+4.Spacewalk
+
+
+14.Which of the following terms best describes the Ansible architecture?
+
+answer: 4
+
+1.Client/Server
+2.Event-Driven
+3.Stateless
+4.Agentless
+
+
+
+15.Q. Ansible is a?
+
+answer: 4
+
+1.Continuous Integration tool
+2.Configuration Management tool
+3.Continuous Monitoring tool
+4.Configuration Deployment tool
+
+16. Which network protocol does Ansible use by default to communicate with managed nodes?
+
+answer: 1
+
+1.SSH
+2.HTTP
+3.HTTPS
+4.SNMP
+
+
+17.Which of the following tasks Ansible can’t do ?
+
+answer:2
+
+1.Configuration Management
+2.Database Management
+3.Security Automation
+4.Network Automation
+
+
+
+18.Which of the following is not a component of Ansible ?
+
+answer:1
+
+1.APIs
+2.Playbooks
+3.Github
+4.Inventory
+
+
+Q. Git is a __________
+
+answer choices: 1
+
+1.Distributed version control system
+2.Centralized version control system
+3.Localized version control system
+4.All of the above
+
+19. Which of the following commands is used to create a new branch.
+
+answer choices: 1
+
+1.git checkout <branch name>
+2.git branch <branch name>
+3.git merge <branch name>
+4.git fetch
+
+
+20.Git ______ stage all the changes in the project directory.
+
+answer choices:1
+
+1.add
+2.status
+3.log
+4.clone
+
+
+21.A special file that is used in Git to tell which files and directories to ignore when making a commit.
+
+answer choices:1
+
+1) .gitignore
+2) ignore-files
+3) .ignore
+4) config
+
+
+
+22. SonarQube is user for?
+
+answer: 
+
+1. static code building tool.
+2. code deployement 
+3. Static code analysis.
+4. code release tool
+
+
+23. What command lets you create a connection between a local and remote repository?
+
+answer choices: 4
+
+1.git remote add new
+2.git remote new origin
+3.git remote origin
+4.git remote add origin
+
+
+24. What are the master components? 
+
+answer:4
+
+1.API Server
+2.Scheduler
+3.Controller-manager
+4.all of the above
+
+
+25. What is the worker components? 
+
+answer: 4
+
+1.Kubelet
+2.Kube-proxy
+3.Kube API Server
+4.both 1 and 2 
+
+
+

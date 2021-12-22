@@ -1,0 +1,176 @@
+21st Dec - Integrating Jenkins with JIRA.
+
+Steps:
+
+1. Creating a project in JIRA. --> Create epics, stories and sprints.
+2. Goto global settings (on top right), select apps --> select oauth credentials (side left) --> create new oauth credential --> give some name, add your jenkins url http:jenkins-url:8080 select developement and build. and create the oauth credential.
+
+3. Login to your jenkins server --> Manage Jenkins --> Manage plugins ---> install atlassian jira cloud plugin. (Install without restart)
+
+4. In Jenkins, go to Manage Jenkins > Configure System screen and scroll to the Jira Software Cloud integration section.
+
+Select Add Jira Cloud Site > Jira Cloud Site. The Site name, ClientID, and Secret fields display.
+
+Enter the following details:
+
+Site name: The URL for your Jira Cloud site, for example yourcompany.atlassian.net.
+
+Client ID: Copy from OAuth credentials screen (Client ID column).
+
+Secret: Select Add > Jenkins.
+
+For Kind, select Secret text.
+
+For Secret, copy from OAuth credentials screen (Secret column).
+
+For Description, provide a helpful description
+
+Secret: Select your newly created secret.
+Select Test connection to make sure your credentials are valid for your Jira site.
+
+Select Save.
+
+#############################################################
+
+
+Creating new multibranch pipeline since in github production there might be multiple branches.
+
+--> new-item -> give some name -> multibranch pipeline
+
+---> In branch sources --> select git --> give the git url where the Jenkins file is available.
+
+----> Click save and apply and it will build the pipeline check if everything is working.
+
+
+adding build information into Jenkins pipeline.
+
+stage('Build') {
+   steps {
+       echo 'Building...'
+   }
+   post {
+       always {
+           jiraSendBuildInfo site: '<sitename>.atlassian.net'
+       }
+   }
+}
+
+Generate jiraSendBuildInfo from pipeline syntax.
+
+
+On github --> create new branch with the issue-key(available fromthe JIRa dashboard) for eg: TT-2
+
+commit some changes 
+
+merge the changes
+
+run the build in jenkins 
+
+on jira issue you will notice the changes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+~~~~~~~~~~~~~
+
+pipeline{
+    agent any
+    tools {
+      maven 'maven3'
+    }
+    environment {
+      DOCKER_TAG = getVersion()
+    }
+    stages{
+        stage('SCM'){
+            steps{
+               git 'https://github.com/testdevops11/dockeransiblejenkins.git'
+            }
+            post {
+            always {
+                jiraSendBuildInfo site: 'testing-devops123.atlassian.net'
+                }
+            }
+        }
+        
+        
+        stage('Maven Build'){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage('Sonarqube') {
+                environment {
+                scannerHome = tool 'SonarQubeScanner'
+                }
+                steps {
+                    withSonarQubeEnv('sonarqube') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=develop -Dsonar.sources=. "
+                        }
+                    timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                    }
+                }
+        }
+        
+        stage('Docker Build'){
+            steps{
+                sh " docker build . -t sahilthakre123/sampleapp:${DOCKER_TAG} "
+            }
+        }
+        stage('Docker push dockerhub'){
+            steps{
+                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHUBPwd')]) {
+                    sh "docker login -u sahilthakre123 -p ${dockerHubPwd}"
+                }
+                sh "docker push sahilthakre123/sampleapp:${DOCKER_TAG}"
+            }
+        }
+        stage('Ansible deployement to slaves'){
+            steps{
+                ansiblePlaybook become: true, credentialsId: 'ssh-12', disableHostKeyChecking: true, extras: '-e DOCKER_TAG=$DOCKER_TAG', installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
+            }
+        }
+    }
+}
+
+ 
+
+def getVersion(){
+    def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
+}
+~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+
+
+
+
+
+

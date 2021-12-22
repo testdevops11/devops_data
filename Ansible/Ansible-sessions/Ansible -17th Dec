@@ -1,0 +1,54 @@
+Ansible -17th Dec
+
+Inclusion:  Calling another yaml file in the tasks section.
+
+Note: The other yaml need to have task list directly.
+
+Step1: Creating a directory:
+
+$ mkdir inclusion
+
+Step2: Create required files:
+
+├── ansible.cfg
+├── inventory
+├── install.yml
+└── playbook.yml
+
+$ cat inventory
+
+[web]
+ip-172-31-46-241
+
+[db]
+ip-172-31-25-186
+
+
+
+$ cat install.yaml
+---
+-
+  name: "install httpd package"
+  yum:
+    name: httpd
+    state: latest
+-
+  name: "Start httpd service"
+  service:
+    name: httpd
+    state: started
+-
+  name: "Create index.html"
+  copy:
+    content: "HELLO"
+    dest: /var/www/html/index.html
+
+
+$ cat playbook.yaml
+- hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+          - include: install.yaml
+
+

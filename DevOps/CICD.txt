@@ -1,0 +1,503 @@
+1. Integration of jira with jenkins.
+2. cicd pipeline.
+3. integration of sonarqube with jenkins.
+4. Doubt solving.
+5. Case studies and scenario.
+
+
+
+Access details:
+
+1. Jenkins server/ansible:
+
+ssh -i "windows.pem" ec2-user@ec2-3-129-208-200.us-east-2.compute.amazonaws.com
+
+
+1. Require jenkins servers
+2. Require Ansible installed on jenkins servers 
+3. Setting up ansible-slave (ssh-keygen)
+4. to install docker on your jenkins 
+5. JIRA -cloud version
+6. Sonarcube - windows server.
+
+Pipeline - from scratch.
+
+
+Java Project --> Mvm tool for build.
+
+
+1. Setting up Jenkins:
+
+--> Install maven Integration plugin 
+
+--> setup Maven in Jenkins.
+
+Dashboard --> Manage Jenkins --> Global Tool Configuration --> Maven
+
+name:maven3
+Install automatically: 3.6.3
+
+
+Maven will be installed during the first maven build.
+
+
+2. Installing ansible on Jenkins host.
+
+$ sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+$ sudo dnf install ansible
+
+3. Setup the ssh-keys for passwordless ssh:
+
+-> On Ansible Controller/Jenkins server run:
+
+$ ssh-keygen
+
+-> copy public key
+
+cat .ssh/id_rsa.pub
+
+-> login to the slave nodes
+--> add the copied key into slave node.
+
+$ echo "ansible-controller-public-key" >> .ssh/authorized_keys
+
+--> Check if the password ssh is working.
+
+
+4. Check ansible executable location: (Requires to setup plugin for ansible on jenkins)
+
+$ ansible --version
+ansible 2.9.27
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = ['/home/ec2-user/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3.6/site-packages/ansible
+  location = /usr/bin/ansible
+  python version = 3.6.8 (default, Sep  9 2021, 07:49:02) [GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]
+
+$ ansible --version |grep executable
+  executable location = /usr/bin/ansible
+
+
+5. Go to Jenkins dashboard:
+
+--> Manage Jenkins --> Manage plugins --> available --> ansible  --> Install without restart.
+
+---> Manage Jenkins --> Global tool configuration --> ansible
+
+name: ansible
+path: /usr/bin/
+
+save.
+
+6. Application Code:
+
+---> Fork Application code from:
+
+https://github.com/testdevops11/dockeransiblejenkins.git
+
+--> explain the Dockerfile
+
+~~~~
+FROM tomcat:8
+# Take the war and copy to webapps of tomcat
+COPY target/*.war /usr/local/tomcat/webapps/dockeransible.war
+~~~~
+
+7. Creating new project in Jenkins:
+
+** pre-requisite git must be installed on jenkins server
+
+$ yum install -y git
+
+Dashboard --> new item 
+
+name:docker-ansible-demo
+pipeline project.
+
+Pipeline section:
+
+
+---> first step: git copy
+
+~~~~~~~~~~~~
+
+pipeline{
+    agent any
+    stages{
+        stage('SCM'){
+            steps{
+                git 'https://github.com/testdevops11/dockeransiblejenkins.git'
+            }
+        }
+    }
+}          
+        
+~~~~~~~~~~~~~~~
+
+Generate the syntax using jenkinsurl:8080/pipeline-syntax
+snippet Generator -> git
+
+---> Second step: Mvn install
+pipeline syntax-->Declarative Directive generator -> tools --> maven --> maven3
+
+
+~~~~~~~~
+
+tools {
+  maven 'maven3'
+}
+
+~~~~~~~~
+
+---------------------
+
+pipeline{
+    agent any
+    tools {
+      maven 'maven3'
+    }
+    stages{
+        stage('SCM'){
+            steps{
+                git 'https://github.com/testdevops11/dockeransiblejenkins.git'
+            }
+        }
+        stage('Maven Build'){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+    }
+}    
+
+-----------------------
+
+step 3: Docker build 
+
+** Install docker on ansible-node:
+
+$ sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+
+$ dnf install docker-ce --nobest -y
+
+$ sudo usermod -aG docker jenkins
+
+$ systemctl restart jenkins
+
+
+~~~~~~~~~~~~~~
+[root@ip-172-31-30-1 ~]# mkdir test
+[root@ip-172-31-30-1 ~]# cd test/
+
+[root@ip-172-31-30-1 test]# git init
+Initialized empty Git repository in /root/test/.git/
+
+[root@ip-172-31-30-1 test]# touch k1
+
+[root@ip-172-31-30-1 test]# git add .
+
+[root@ip-172-31-30-1 test]# git commit -m "first commit"
+[master (root-commit) 43dec3a] first commit
+ Committer: root <root@ip-172-31-30-1.us-east-2.compute.internal>
+
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 k1
+
+[root@ip-172-31-30-1 test]# git rev-parse --short HEAD
+43dec3a
+~~~~~~~~~~~~~~~~~~~~
+
+Pipeline-syntax:
+
+snippet generator--> sh:shell script -->
+
+git rev-parse --short HEAD
+
+advance --> check return standard output
+
+output: sh returnStdout: true, script: 'git rev-parse --short HEAD' 
+
+Define a function in the pipeline:
+
+def getVersion(){
+    def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
+}
+
+pipeline-syntax:
+
+declarative syntax -> environment
+
+Name: DOCKER_TAG
+Value: getVersion()
+
+~~~~
+environment {
+  DOCKER_TAG = "getVersion()"
+}
+~~~~
+
+Get your Docker-Hub Username: sahilthakre123
+Image name: sampleapp
+version:01
+
+
+Add it to the pipeline:
+
+~~~~~~~~~~~~~~~~~~
+
+pipeline{
+    agent any
+    tools {
+      maven 'maven3'
+    }
+    environment {
+      DOCKER_TAG = getVersion()
+    }
+    stages{
+        stage('SCM'){
+            steps{
+               git 'https://github.com/testdevops11/dockeransiblejenkins.git'
+            }
+        }
+        
+        stage('Maven Build'){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        
+        stage('Docker Build'){
+            steps{
+                sh " docker build . -t sahilthakre123/sampleapp:${DOCKER_TAG} "
+            }
+        }
+    }
+}
+
+def getVersion(){
+    def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
+}
+~~~~~~~~~~~~~~~~~~~~
+
+
+
+STEP 4: Docker push:
+
+Need to login first to the docker-hub
+
+pipeline-syntax --> snippet generator --> with credentials ---> add secret text 
+
+Variable: dockerHUBPwd
+key: docker-hub
+
+
+withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
+    // some block
+}
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stage('DockerHub Push'){
+            steps{
+                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
+                    sh "docker login -u sahilthakre123 -p ${dockerHubPwd}"
+                }
+                
+                sh "docker push sahilthakre123/sampleapp:${DOCKER_TAG} "
+            }
+        }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+STEP 5. Using ansible to push the file to slave node:
+
+1. Explain the ansible-playbook 
+2. Explain the inventory
+
+
+Edit the inventory file as per your host details: and commit the changes.
+
+
+[dev]
+
+3.133.30.251  ansible_user=ec2-user
+3.16.20.239 ansible_user=ec2-user
+
+Pipeline-syntax --> ansible-plabook invoke a ansible playbook 
+
+playbook name: deploy-docker.yml
+
+inventory name: dev.inv
+
+Ssh-connection credentials:
+
+Add jenkins ==> ssh username with private key
+
+ID: dev-server
+Description: dev-server
+username: ec2-user
+
+
+
+
+
+Get a private key of your master node for the user who have passwordless access
+
+$ cat .ssh/id_rsa
+
+~~~~~~~~~~~~
+-----BEGIN OPENSSH PRIVATE KEY-----
+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
+dGUuaW50ZXJuYWwB
+-----END OPENSSH PRIVATE KEY-----
+~~~~~~~~~~~~
+
+
+Add private key : 
+
+1.select become root 
+2. Disable host ssh key check 
+3. Extra parameters: -e DOCKER_TAG=
+
+~~~~~~~~~~~
+ansiblePlaybook become: true, credentialsId: 'dev-server', disableHostKeyChecking: true, extras: 'DOCKER_TAG=""', installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
+
+~~~~~~~~
+
+
+In extras add ${DOCKER_TAG}
+
+~~~~~~~~
+ansiblePlaybook become: true, credentialsId: 'dev-server', disableHostKeyChecking: true, extras: '-e DOCKER_TAG=${DOCKER_TAG}', installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
+~~~~~~~~
+
+
+
+Create new stage inside pipeline :
+
+pipeline{
+    agent any
+    tools {
+      maven 'maven3'
+    }
+    environment {
+      DOCKER_TAG = getVersion()
+    }
+    stages{
+        stage('SCM'){
+            steps{
+               git 'https://github.com/testdevops11/dockeransiblejenkins.git'
+            }
+        }
+        
+        stage('Maven Build'){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        
+        stage('Docker Build'){
+            steps{
+                sh " docker build . -t sahilthakre123/sampleapp:${DOCKER_TAG} "
+            }
+        }
+        stage('DockerHub Push'){
+            steps{
+                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
+                    sh "docker login -u sahilthakre123 -p ${dockerHubPwd}"
+                }
+                
+                sh "docker push sahilthakre123/sampleapp:${DOCKER_TAG} "
+            }
+        }
+        stage('Docker deploy using ansible'){
+            steps{
+                ansiblePlaybook become: true, credentialsId: 'dev-server', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
+            }
+        }
+    }
+}
+
+def getVersion(){
+    def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
+}
+
+
+
+
+Task: Ansible
+
+1. Install docker package
+2. Start service docker
+3. Run a container using specified image.
+
+
+
+
+
+
+--- 
+- 
+  become: true
+  hosts: dev
+  tasks: 
+    - 
+      command: "{{ item }}"
+      name: "install docker"
+      with_items: 
+        - "sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo"
+        - "sudo dnf install docker-ce --nobest -y"
+        - "sudo systemctl enable docker"
+        - "sudo systemctl start docker"
+        - "sudo dnf install python3-pip -y"
+        - "pip3 install docker-py"
+    - 
+      docker_container: 
+        image: "sahilthakre123/sampleapp:{{DOCKER_TAG}}"
+        name: sampleapp
+        published_ports: 
+          - "0.0.0.0:8553:8080"
+        state: started
+
+
+
+
+

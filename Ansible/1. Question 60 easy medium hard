@@ -1,0 +1,19 @@
+1. Question 60 easy medium hard
+2. Lab question 3-4 
+3. 
+
+
+Task1 :
+
+1. Passwordless-ssh
+
+1. create three servers.
+2. From server1 ==> server2 and server3 without passout.
+3. Create ssh keys on server1
+4. add those created keys on server2 and server3
+
+a. ec2-user (server1) ---> ec2-user (server2 and server3)
+b. root (server1) --> ec2-user (server2 and server3)
+c. ec2-user (server1) --> root (server2 and server3)
+
+ssh root@server2

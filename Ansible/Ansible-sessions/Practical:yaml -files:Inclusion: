@@ -1,0 +1,121 @@
+Inclusion:
+
+install.yaml 
+--- 
+- 
+  name: "install httpd package"
+  yum: 
+    name: httpd
+    state: latest
+- 
+  name: "Start httpd service"
+  service: 
+    name: httpd
+    state: started
+- 
+  copy: 
+    content: HELLO
+    dest: /var/www/html/index.html
+  name: "Create index.html"
+
+--------------------playbook.yaml-----------
+- hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+          - include: install.yaml
+
+
+
+
+################ While #####################
+
+--- 
+- 
+  hosts: all
+  tasks: 
+    - 
+      include: Ubuntu.yaml
+      when: "ansible_os_family == "Ubuntu"
+    - 
+      include: RHEL.yaml
+      when: "ansible_os_family == "RedHat"
+
+
+vi RHEL.yaml
+
+- hosts: all 
+  tasks:
+    - name: "Printing os "
+      debug:
+          msg: "I am redhat Machine" 
+
+--- 
+- 
+  hosts: all
+  tasks: 
+    - 
+      debug: 
+        msg: "I am redhat Machine"
+      name: "Printing os "
+
+
+
+
+
+
+
+- hosts: all
+tasks:
+- stat:
+path: /home/mdtutorials2/sample.txt
+register: result
+- debug:
+msg: "Ansible When File Not Present Example."
+when: result.stat.exists == false
+
+
+
+
+- name : add several users
+user :
+name : " {{ item }} "
+state : present
+groups : "wheel"
+loop :
+- testuser1
+- testuser2
+
+
+
+- name : add several users
+user :
+name : " {{ item.name }} "
+state : present
+groups : " {{ item.groups }} "
+loop :
+- { name : 'testuser1' , groups : 'wheel' }
+- { name : 'testuser2' , groups : 'root' }
+
+
+
+--- 
+- 
+  hosts: all
+  tasks: 
+    - 
+      name: "delete several users"
+      user: 
+        groups: " {{ item.groups }} "
+        name: " {{ item.name }} "
+        state: absent
+  with_items: 
+    - 
+      groups: wheel
+      name: testuser1
+    - 
+      groups: root
+      name: testuser2
+
+
+

@@ -1,0 +1,74 @@
+Integration with Sonarqube:
+
+Prerequisite:
+
+1. Working copy of sonarqube server
+2. working copy of jenkins server
+
+
+Integration:
+
+https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/
+
+Links: https://medium.com/@rosaniline/setup-sonarqube-with-jenkins-declarative-pipeline-75bccdc9075f
+
+
+Step1: Configuring the sonarqube scanner inside jenkins.
+
+=====> Manage Jenkins ---> Manage plugins --> SonarQube Scanner for Jenkins --> Install without restart
+
+
+Step2: Generating the token inside sonarqube:
+
+Click on the profile icon on top right --> select my account ---> security ---> generate new token
+
+name: jekin-test 
+
+copy the secret text:  b3b936211070197edaef2e1219e75cda98b8ba28
+
+
+Step3: Configuring the jenkins for authentication.
+
+====> Manage Jenkins --> Configure system --> SonarQube Servers
+
+Name: sonarqube
+
+Server URL: http://18.117.226.130:9000
+
+add credential --> credential from secret text --> copy your token in secret --> give some ID name and description. save it.
+
+Select your credential from dropdown list.
+
+apply and save it.
+
+Step 4: Configuring sonarqube scanner:
+
+===> Manage Jenkins ==> Globaltoolconfiguration ==> SonarQube Scanner
+
+name: SonarQubeScanner
+
+Install automatically through apache maven ===> apply and save.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

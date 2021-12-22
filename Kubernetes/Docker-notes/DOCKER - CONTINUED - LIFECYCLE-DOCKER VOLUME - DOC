@@ -1,0 +1,223 @@
+DOCKER - CONTINUED - LIFECYCLE-DOCKER VOLUME - DOCKER COMPOSE
+
+===> DOCKER Container STATES: 
+
+Created: A container that has been created but not started
+Running: A container running with all its processes
+Paused: A container whose processes have been paused
+Stopped: A container whose processes have been stopped
+Deleted: A container in a dead state
+
+Image: 
+https://ibb.co/Jq3QF15
+
+
+===> Docker commit: Used to create the images from running container
+
+Demo:
+
+===============================================================
+
+1. Pulling the image:
+
+# docker pull ubuntu
+Using default tag: latest
+latest: Pulling from library/ubuntu
+Digest: sha256:626ffe58f6e7566e00254b638eb7e0f3b11d4da9675088f4781a50ae288f3322
+Status: Image is up to date for ubuntu:latest
+docker.io/library/ubuntu:latest
+
+[root@ip-172-31-25-186 ~]# docker images |grep ubuntu
+ubuntu                         latest             ba6acccedd29   2 months ago   72.8MB
+
+2. Run that container:
+
+# docker run -it ba6acccedd29 /bin/bash
+root@a78275c30b04:/#
+root@a78275c30b04:/#
+root@a78275c30b04:/#
+
+3. Install one package -nmap inside container:
+
+# apt-get update
+# apt-get install nmap 
+
+root@a78275c30b04:/# nmap --version
+Nmap version 7.80 ( https://nmap.org )
+Platform: x86_64-pc-linux-gnu
+Compiled with: liblua-5.3.3 openssl-1.1.1d nmap-libssh2-1.8.2 libz-1.2.11 libpcre-8.39 libpcap-1.9.1 nmap-libdnet-1.12 ipv6
+Compiled without:
+Available nsock engines: epoll poll select
+
+4. Exit from container:
+
+# exit 
+
+5. on the host find out the container id:
+
+# docker ps -a
+CONTAINER ID   IMAGE              COMMAND                  CREATED             STATUS                      PORTS     NAMES
+a78275c30b04   ba6acccedd29       "/bin/bash"              3 minutes ago       Exited (0) 18 seconds ago             optimistic_mccarthy
+
+6. Docker commit 
+
+$ docker commit [CONTAINER_ID] [new_image_name]
+
+- It will create new image
+
+7. List the image:
+
+$ docker images ls
+
+================================================================
+
+
+################# Docker Volume ########################
+
+What is Docker Volume: To store the container data outside the default location of docker. ( eg: /var/lib/docker/containers).
+
+-- Need to mount the directory inside the container as a volume.
+
+volume ==> storage.
+
+Demo: 
+
+1. Create one container.
+
+# docker run -d ubuntu bash -c "shuf -i 1-10000 -n 1 -o /data.txt && tail -f /dev/null"
+a89d945bdff1e5d8e3f551d47d1e64881e643912bdbc813e15ce71e1eac2ef20
+
+
+# docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS     NAMES
+a89d945bdff1   ubuntu         "bash -c 'shuf -i 1-…"   5 seconds ago    Up 4 seconds              elegant_ganguly
+
+2. Checking the data inside the container:
+
+# docker exec a89d945bdff1 cat /data.txt
+1976
+
+3. Creating another container with the same image:
+
+# docker run -it ubuntu ls /
+bin   dev  home  lib32	libx32	mnt  proc  run	 srv  tmp  var
+boot  etc  lib	 lib64	media	opt  root  sbin  sys  usr
+
+
+4. Removing the old container which have the data.txt file.
+
+[root@ip-172-31-25-186 ~]# docker rm -f a89d945bdff1
+a89d945bdff1
+
+Observation: The file data.txt is not there which is expected since the container is created newly from the same image.
+
+
+------------------------------------------------------------------------------------------------------------
+Persisting the Data - Creating volume:
+
+
+1. Creating the volume inside docker:
+
+# docker volume create test_volume
+test_volume
+
+# docker volume ls
+DRIVER    VOLUME NAME
+local     7bc77ad6fea9a8ce0d99d342609a74643a0c1be885621da5b61692308729bf4a
+local     97ea2bb201768d4d006a1693120e5065c9ba083ff9fb20c46c97d357cfe1c437
+local     test_volume
+
+2. Running the container using the volume attachment:
+
+$ docker run -dp 3000:80 -v test_volume:/etc/todos docker/getting-started
+
+3.Check if the application is running:
+
+[root@ip-172-31-25-186 ~]# docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED             STATUS             PORTS                                   NAMES
+4e6a5aca9d2d   docker/getting-started   "/docker-entrypoint.…"   2 minutes ago       Up 2 minutes       0.0.0.0:3000->80/tcp, :::3000->80/tcp   musing_grothendieck
+
+4. Open 3000 port in security group in AWS/Cloud-platform.
+
+5. Try to access the application.
+
+6. Check the volume binding inside inspect:
+
+$ docker inspect <container-id> |grep -iA10 mount
+
+"Mounts": [
+            {
+                "Type": "volume",
+                "Name": "test_volume",
+                "Source": "/var/lib/docker/volumes/test_volume/_data",
+                "Destination": "/etc/todos",
+                "Driver": "local",
+                "Mode": "z",
+                "RW": true,
+                "Propagation": ""
+
+7. Go inside the container and create the data inside /etc/todos
+
+# docker exec -it 4e6a5aca9d2d sh
+/ #
+/ # cd /etc/todos
+/etc/todos # touch k1
+
+/ # exit
+
+8. On node check if the file is available in volumes:
+
+$ ls /var/lib/docker/volumes/test_volume/_data/
+k1
+
+
+9. Remove the container now.
+
+# docker rm -f 4e6a5aca9d2d
+4e6a5aca9d2d
+
+10. Check the status of volume using ispect command:
+
+# docker inspect test_volume
+[
+    {
+        "CreatedAt": "2021-12-17T06:57:07Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/test_volume/_data",
+        "Name": "test_volume",
+        "Options": {},
+        "Scope": "local"
+    }
+
+ 11. we create a new container but attaching the old volume:
+
+ $ docker run -dp 3000:80 -v test_volume:/etc/todos docker/getting-started
+
+ 12. You can check that the new container already have the data created in the past which k1 file.
+
+ # docker exec <container-id> ls /etc/todos
+
+ =========================================================================================================== 
+Bind Volumes:  --> when we want to specify the host path instead of using volumes provided by the docker.
+
+# docker run -dp 3000:80 --name=test2 -v "$(pwd):/etc/todos" docker/getting-started
+
+[root@ip-172-31-25-186 ~]# docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS             PORTS                                   NAMES
+a7da6cc4c0c5   docker/getting-started   "/docker-entrypoint.…"   50 seconds ago   Up 50 seconds      0.0.0.0:3000->80/tcp, :::3000->80/tcp   test2
+
+# docker exec -it a7da6cc4c0c5 sh
+/ #
+/ #
+/ # cd /etc/todos/
+/etc/todos #
+/etc/todos # ls
+Dockerfile       anaconda-ks.cfg  exec_dir         mongo            original-ks.cfg  test             testfile.txt
+
+
+============================================================================================================
+
+
+
+

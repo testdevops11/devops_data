@@ -1,0 +1,246 @@
+Docker-session- 17th dec 2021 - Network Overview
+
+- Recap of docker networking
+
+1. Bridge ---> a. public bridge b. user-defined bridge --> to communicate between containers.
+2. Host --> The containers will use host networking directly
+3. None --> No network will be given to the container and it can not communicate with anyone
+4. Overlay -> Communication between two containers who are on different hosts.
+
+
+- Listing the network in docker:
+
+$ docker network ls
+NETWORK ID     NAME                   DRIVER    SCOPE
+34ebf53e0fe7   bridge                 bridge    local
+bcf541b590b2   compose-test_default   bridge    local
+cddcc9a489c2   host                   host      local
+b29fb0567f03   none                   null      local
+1701243967c5   test-network           bridge    local
+
+- Checking help:
+
+$ docker network --help
+
+Usage:  docker network COMMAND
+
+Manage networks
+
+Commands:
+  connect     Connect a container to a network
+  create      Create a network
+  disconnect  Disconnect a container from a network
+  inspect     Display detailed information on one or more networks
+  ls          List networks
+  prune       Remove all unused networks
+  rm          Remove one or more networks
+
+
+-- To create new container without running it.
+
+# docker create -it  --name=network-demo centos
+0c8e7facd31c3f0a06ab807c3478f8f0efd76b05a7028e1c949a69a2deca66ac
+
+-- To check the created container:
+
+# docker ps -a
+CONTAINER ID   IMAGE              COMMAND                  CREATED              STATUS                      PORTS     NAMES
+0c8e7facd31c   centos             "/bin/bash"              About a minute ago   Created                               network-demo
+
+-- to start the container:
+
+[root@ip-172-31-25-186 ~]# docker start 0c8e7facd31c
+0c8e7facd31c
+
+-- To check if the container:
+
+[root@ip-172-31-25-186 ~]# docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+0c8e7facd31c   centos    "/bin/bash"   3 minutes ago   Up 16 seconds             network-demo
+
+-- TO check what is the current networking used by the container we spawned:
+
+
+# docker inspect 0c8e7facd31c |grep -i network
+        "Name": "/network-demo",
+            "NetworkMode": "default",
+        "NetworkSettings": {
+            "Networks": {
+                    "NetworkID": "34ebf53e0fe72ef422fe1503c679c15a7490934b52170521f0226786f589edd1",
+
+
+[root@ip-172-31-25-186 ~]# docker network ls
+NETWORK ID     NAME                   DRIVER    SCOPE
+34ebf53e0fe7   bridge                 bridge    local
+
+
+Note: This confirms that whenever we run the container without specifying any network it uses default/public bridge.
+
+--- Create the network in docker:
+
+# docker network create 17dec
+d0e6472174ac06fc4afdb6d5907dc934701f8f0d4906e69cf7a6bb025af6a1b7
+
+--> Checking the created network
+
+# docker network ls |grep dec
+d0e6472174ac   17dec                  bridge    local
+
+---> Connect network to the container
+
+# docker network connect <network-ID> <Container-ID>
+# docker network connect name-of-network  container-name
+# docker network connect d0e6472174ac 0c8e7facd31c
+
+
+---> Check if the container has got the new network
+
+# docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+0c8e7facd31c   centos    "/bin/bash"   16 minutes ago   Up 12 minutes             network-demo
+[root@ip-172-31-25-186 ~]#
+[root@ip-172-31-25-186 ~]#
+[root@ip-172-31-25-186 ~]# docker inspect 0c8e7facd31c |grep -i network
+        "Name": "/network-demo",
+            "NetworkMode": "default",
+        "NetworkSettings": {
+            "Networks": {
+                    "NetworkID": "d0e6472174ac06fc4afdb6d5907dc934701f8f0d4906e69cf7a6bb025af6a1b7",
+                    "NetworkID": "34ebf53e0fe72ef422fe1503c679c15a7490934b52170521f0226786f589edd1",
+
+# docker network ls
+NETWORK ID     NAME                   DRIVER    SCOPE
+d0e6472174ac   17dec                  bridge    local
+34ebf53e0fe7   bridge                 bridge    local
+bcf541b590b2   compose-test_default   bridge    local
+cddcc9a489c2   host                   host      local
+b29fb0567f03   none                   null      local
+1701243967c5   test-network           bridge    local
+
+
+----> Attaching the network while the container is run:
+
+$ docker container run -it -d  --network 17dec --name=new-container-with-network centos /bin/bash
+56b97d83c2829366a9e500337b4f94283f892ebee94204e99c524d2379df1e68
+
+# docker inspect 56b97d83c282 |grep -i network
+        "Name": "/new-container-with-network",
+            "NetworkMode": "17dec",
+        "NetworkSettings": {
+            "Networks": {
+                    "NetworkID": "d0e6472174ac06fc4afdb6d5907dc934701f8f0d4906e69cf7a6bb025af6a1b7",
+
+# docker network ls
+NETWORK ID     NAME                   DRIVER    SCOPE
+d0e6472174ac   17dec                  bridge    local
+
+
+====> Disconnecting the network:
+
+
+# docker network disconnect 17dec new
+
+[root@ip-172-31-25-186 ~]# docker inspect new |grep -i network
+            "NetworkMode": "default",
+        "NetworkSettings": {
+            "Networks": {
+                    "NetworkID": "34ebf53e0fe72ef422fe1503c679c15a7490934b52170521f0226786f589edd1",
+
+# docker network ls
+NETWORK ID     NAME                   DRIVER    SCOPE
+d0e6472174ac   17dec                  bridge    local
+34ebf53e0fe7   bridge                 bridge    local
+bcf541b590b2   compose-test_default   bridge    local
+cddcc9a489c2   host                   host      local
+b29fb0567f03   none                   null      local
+1701243967c5   test-network           bridge    local
+
+====> How to remove the docker network:
+
+# docker network rm <network-identifier>
+
+Note: before deleting any network all the container should be disconnected from that network.
+
+Check how many containers are part of that network:
+
+# docker inspect d0e6472174ac
+[
+    {
+        "Name": "17dec",
+   ========== Truncated output ===============
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "0c8e7facd31c3f0a06ab807c3478f8f0efd76b05a7028e1c949a69a2deca66ac": {
+                "Name": "network-demo",
+                "EndpointID": "2d9f36b7b13bb6bf98810d66cdf531499d3e129857f61c9e8e04d9c44db010cf",
+                "MacAddress": "02:42:ac:14:00:02",
+                "IPv4Address": "172.20.0.2/16",
+                "IPv6Address": ""
+            },
+            "f6ac83158b7499c5d3d9ec8fced460c1bee409347c3e344f4d20e8b667ecb240": {
+                "Name": "new",
+                "EndpointID": "6caf996aef2f99f8cea1a41f86787740d7504ed6afc42e79703ba61a0dd8f176",
+                "MacAddress": "02:42:ac:14:00:03",
+                "IPv4Address": "172.20.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+# docker network disconnect 17dec new
+#
+# docker network disconnect 17dec network-demo
+#
+#
+# docker network rm 17dec
+17dec
+# docker network ls
+NETWORK ID     NAME                   DRIVER    SCOPE
+34ebf53e0fe7   bridge                 bridge    local
+bcf541b590b2   compose-test_default   bridge    local
+cddcc9a489c2   host                   host      local
+b29fb0567f03   none                   null      local
+1701243967c5   test-network           bridge    local
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

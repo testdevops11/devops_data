@@ -1,0 +1,163 @@
+Labs and assignments:
+
+GIT:
+
+Task-1
+
+
+1. Create a local directory and create three files k1 k2 and k3 in it.
+2. add all the files to stage region.
+3. remove k3 from stage region
+4. commit the changes with msg "Commiting k1 and k2"
+
+GitLab:
+
+Task-2
+
+1. Open and create new project "exam-project"
+2. push the committed files in task-1 to the exam-project 
+
+
+Jenkins
+
+Task-3
+
+1. Login to the Jenkins and change the home directory to "/opt/jenkins".
+
+Task-4
+
+1. Restart your EC2 VM (JENKINS) and it will get a new IP
+2. Change Jenkins url since the IP is changed.
+
+
+Task-5 
+
+1. Create a new freestyle project "test-freestyle".
+2. Configure the project build so that if there are changes in github the build should be triggered automatically.
+
+you can choose any existing project on github.
+
+
+JIRA: 
+
+Task-6
+
+1.Create a new project "Test-JIRA".
+2. Create a team managed - scrum /kanban project which should have the sprints.
+3.Create two epics : planning and developement
+4. Under planning  : add three stories : plan test execute
+5. Under developement: add two stories: develop1 and develop2
+6. create two sprints: "project-phase1" and "project-phase2"
+7.Create a workflow which has four stages: todo inprogress and QA and done.
+8. Create trasitions so that the project status should only forward not backward.
+
+
+Docker:
+
+Task-7 
+
+1.Run a container from centos image from dockerhub.
+2.container should run in the background.
+3.it should be available in the "$ docker ps" output.
+
+hint: container should not be in exited state.
+
+
+task-8
+
+1.Create a Dockerfile with following parameters
+2.It is build out of centos image.
+3.It has git installed
+4.Run the container from newly created image and check if the git is available or not.
+
+
+task-9
+
+1. Create a new bridge network "test"
+2. attach it to the centos container
+3. check if the container is showing the network "test" attached.
+
+
+Ansible:
+
+task-10
+
+
+1. write a adhoc command to check the ping connectivity between ansible master and ansible nodes.
+
+
+task-11
+
+1. write a simple playbook to run a http webserver on your ansible clients.
+
+tasks - installing httpd package
+        running httpd service
+        creating a file /var/lib/www/index.html with content "Hello world!"
+
+2. Check if the webpage is available or not.        
+
+
+task-12
+
+Create an ansible role out of above task.
+
+
+---------------------------------------------------------
+##########################################################
+Assignments: 
+
+
+Task-1
+
+1. Create one new RHEL ec2 VM and configure it as the slave for your jenkins master.
+
+
+Task-2
+
+1. Create a new freestyle project "test-freestyle".
+2. Configure the integration of gitlab and Jenkins. (can use internet for steps)
+2. Configure the project build so that if there are changes in gitlab the build should be triggered automatically.
+
+Task-3 
+
+1.Create a JIRA company managed scrum project.
+2.Create a workflow template and apply it to your project.
+3.Create two epics : planning and developement
+4. Under planning  : add three stories : plan test execute
+5. Under developement: add two stories: develop1 and develop2
+6. create two sprints: "project-phase1" and "project-phase2"
+
+
+task-4 
+
+1. Create a docker container with "test-network" and "test-volume".
+2. Add a bind volume from the host users home directory. eg: /home/user-name
+
+task-5
+
+1. Create a docker compose file to deploy sample two tier application with web and db component.
+
+
+task-6.
+
+Write a complete CICD pipeline by using JIRA DOCKER JENKINS ANSIBLE and GITHUB.
+
+you can choose any java project for maven build.
+
+task-7
+Integrate the sonarqube with jenkins and do code analysis.
+
+task-8
+1. write a customised Dockerfile for a centos container which have docker and python installed.
+
+2. Run a the above container and check if docker and python is installed.
+
+task-9
+1. Write a role which can install docker and python on remote slave nodes
+2. Use the above role in one of your playbook.
+
+task10
+
+download a role from ansible galaxy and use it inside your main.yaml
+
+

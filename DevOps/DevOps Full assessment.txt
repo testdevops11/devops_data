@@ -1,0 +1,540 @@
+DevOps Full assessment:
+
+
+Easy:
+
+1.	What is DevOps?     
+a.	It’s a Software Development Methodology
+b.	It’s a culture that promotes better co-operation between Dev & Ops team 
+c.	A set of best practices to reduce delivery times
+d.	All of the above
+
+answer: d
+
+2. 	Pick all that is needed to Integrate Jenkins with GitHub Server for CI
+a.	GitHub credentials (SSH keys or username & password)
+b.	GitHub plugin installed on Jenkins
+c.	a and b
+d.	None 
+
+answer:c 
+
+3. What is the basic problem that is addressed by Containers?
+a.	They are light weight
+b.	Resolves application portability issues
+c.	Software Components and their dependency issues
+d.  all of the above
+
+answer d 
+
+4. What is Docker Swarm? Pick one or more
+a.	A list of docker containers in any organization
+b.	A bunch of docker containers running on a single powerful host
+c.	A cluster of docker hosts or nodes which are connected 
+d.	None of the above
+
+answer: c
+
+5. Which environment variable do you optionally use to specify the folder in which Jenkins configuration and runtime data is contained?
+a.	JENKINS_ROOT
+b.	M2_HOME
+c.	JENKINS_HOME
+d.	JAVA_HOME
+
+answer:d 
+
+6.What is the difference between Continuous Delivery and Continuous Deployment?
+A. Continuous Delivery is a manual task, while Continuous Deployment is an automated task.
+B. Continuous Delivery has a manual release to production decision, while Continuous Deployment has releases automatically pushed to production.
+C. Continuous Delivery includes all steps of software development life cycle; Continuous Deployment may skip few steps such as validation and testing.
+D. Continuous Delivery means complete delivery of the application to customer; Continuous Deployment includes only deployment of the application in customer environment
+
+answer: b
+
+7.What is the practice of releasing your new code to production commonly known as?  
+ 
+1.Continuous Integration
+2.Continuous Delivery
+3.Continuous Deployment
+4.Infrastructure as Code
+
+answer:c
+
+8. Where does details of a build can be available in Jenkins UI ?  
+
+a) Build histrory
+
+b) Console Output
+
+c) Dashboard
+
+d) Settings
+
+answer: b
+
+9. what is the use of fork in GIT?  
+
+a) used to view changes in public repository
+
+b) trigger changes
+
+c) creates personal copy of respository for making changes
+
+d) to checkout repository
+
+answer:c
+
+10. What is Jenkins ?    
+
+a) Continuous integration tool
+
+b) Continuous delivery tool
+
+c) Option A and B
+
+d) None of the above
+
+answer:C
+
+11. What is JIRA?   
+
+1.Business Requirement documentation
+2.Scrum and Kanban
+3.Issue and project tracking tool
+4.Agile Reporting tool
+
+answer:3
+
+12.The markup language used to write Docker configuration files is:     
+
+1.JSON
+2.YAML
+3.XML
+4.HTML
+
+answer:2
+
+13. Which of the following terms best describes the Ansible architecture?
+
+1.Client/Server
+2.Event-Driven
+3.Stateless
+4.Agentless
+
+answer: 4
+
+14. Ansible is a?
+
+1.Continuous Integration tool
+2.Configuration Management tool
+3.Continuous Monitoring tool
+4.Configuration Deployment tool
+
+answer: 4
+
+15.Which network protocol does Ansible use by default to communicate with managed nodes?
+
+1.SSH
+2.HTTP
+3.HTTPS
+4.SNMP
+
+answer: 1
+
+16.Git is a __________
+
+answer choices: 1
+
+1.Distributed version control system
+2.Centralized version control system
+3.Localized version control system
+4.All of the above
+
+17.SonarQube is user for?
+
+1. static code building tool.
+2. code deployement 
+3. Static code analysis.
+4. code release tool
+
+answer: 3
+
+
+18.What command lets you create a connection between a local and remote repository?
+
+1.git remote add new
+2.git remote new origin
+3.git remote origin
+4.git remote add origin
+
+answer choices: 4
+
+
+19. What defines the DevOps process loop?
+
+a. Plan, build, release, deploy, monitor
+b. Code, test, deploy, operate, monitor, plan
+c. Plan, code, build, test, deploy, operate, monitor, plan
+d. Build, test, release, monitor
+
+answer: c
+
+20. What is a Dockerfile?
+A. A developer who loves Docker and containerization, frequently espousing its virtues
+B.Any report or document that Docker components produce
+C.Any folder or document to run Docker components
+D.A template used to describe the build of an image
+
+answer: D
+
+
+Medium:
+
+21. Choose the pre-requisites required to install/run Jenkins, pick one or more.
+a.	JDK or JRE  version 1.8
+b.	Apache Ant
+c.	Apache Maven
+d.	Apache Tomcat Server
+
+
+Answer: a
+
+
+22. Pick the docker option which will expose a container originally running on port 8080 to port 80 of the Host machine
+a.	 -p 8080:80
+b.	-p 80:8080 
+c.	–p 80:80
+d.	–p 8080:8080
+
+answer: b
+
+23.	What is the difference between docker “run” and “start” command? Pick one or more
+a.	There is no difference
+b.	Both commands can be used to spin “new” containers
+c.	“run” command will run a stopped container while “start” will spin a new container
+d.	“run” command will spin a new container while “start” will run a stopped container
+
+answer: d
+
+24. What best defines a pipeline Job in Jenkins? Pick one or more.
+a.	A bunch of jobs that listen to the same message queue
+b.	A series of Jobs that are owned & run by the same user
+c.	A set of Jobs which define a certain workflow & dependency
+d.	There is nothing called pipeline Jobs in Jenkins
+
+answer: c
+
+25.	What is a Jenkins Agent or Slave? Pick one or more.
+a.	It is another Jenkins Server
+b.	It’s a light weight Jenkins worker 
+c.	It’s a Jenkins Server running on low configuration node
+d.	There is no difference between Jenkins Server & Agent
+
+answer: b
+
+26. Pick one that is required for Jenkins to build a Docker Image
+a.	JDK
+b.	Docker and Docker plugin
+c.	Permission for jenkins user to run docker commands
+d.	all of the above
+
+answer: d
+
+27.	Which of the following command creates a docker volume? Pick one or more
+a.	docker create volume volume_name
+b.	docker volume create volume_name
+c.	docker run –v volume_name alpine /bin/sh
+d.	docker start –v volume_name:/volume_name
+
+answer: b 
+
+28.	Which source code management plug-in does Jenkins install by default (recommended plugins)? Pick one or more.
+a.	Subversion (SVN)
+b.	Git
+c.	CVS
+d.	None
+
+answer: b
+
+29.Who can create issues in JIRA?  
+
+1.Users
+2.Developers
+3.Admins
+4. All of above
+
+answer:4
+
+30. Which of the following is not an issue type? 
+
+1.Task
+2.User Story
+3.Minor
+4.Epic
+
+answer: 3
+
+31. Information on how to build a Docker image is written in a file named:      
+1.Dockerfile
+2.Jenkinsfile
+3.docker-compose
+4.dockerimage
+
+  answer:1
+
+
+
+32. Docker container is often described as an improvement over what other technology?
+
+1.Cloud Computing
+2.Devops
+3.virtual machines
+4.microservices 
+
+answer:3
+
+
+33. 13.Which Configuration Management Solution is Agent less ? 
+
+1.Ansible
+2.Chef
+3.Puppet
+4.Spacewalk
+
+answer:1
+
+
+34. What is the worker components? 
+
+1.Kubelet
+2.Kube-proxy
+3.Kube API Server
+4.both 1 and 2 
+
+answer: 4
+
+35.Which of the following tasks Ansible can’t do ?
+
+1.Configuration Management
+2.Database Management
+3.Security Automation
+4.Network Automation
+
+answer:2
+
+
+36.Which of the following is not a component of Ansible ?
+
+1.APIs
+2.Playbooks
+3.Github
+4.Inventory
+
+answer:3
+
+37. Which of the following commands is used to create a new branch.
+
+1.git checkout <branch name>
+2.git branch <branch name>
+3.git merge <branch name>
+4.git fetch
+
+answer choices: 1
+
+38.What are the master components? 
+
+1.API Server
+2.Scheduler
+3.Controller-manager
+4.all of the above
+
+answer:4
+
+39.What command should you run to see all running container in Docker?
+A.$ docker ps
+B.$ docker ps -a
+C.$ docker sudo
+D.$ docker add
+
+answer: a
+
+40. how to run the container from image in the background?
+
+a. docker run -it <container-ID>
+b. docker run -d <container-ID>
+c. docker run -d <Image-ID>
+d. docker run -d <Stopped container ID>
+
+Hard:
+
+41. What happens if you attempt to perform a Docker build based on an image that has not been previously referenced on your machine?   
+
+1.Docker will return a 408: image not found message.
+2.Docker will return a 404: file not found message.
+3.Docker will pull the image from GitHub.
+4.Docker will pull the image from Docker Hub.
+
+answer:4
+
+42.Which of the following statements is most correct?
+answer choices      
+
+1.Docker allows you to run images and build containers.
+2.Docker allows you to run containers and build images.
+3.Docker allows you to run and build containers.
+4.Docker allows you to run and build images.
+
+answer:2
+
+43. Git ______ stage all the changes in the project directory.
+
+1.add
+2.status
+3.log
+4.clone
+
+answer choices:1
+
+44.A special file that is used in Git to tell which files and directories to ignore when making a commit.
+
+1) .gitignore
+2) ignore-files
+3) .ignore
+4) config
+
+answer choices:1
+
+45.Kubernetes cluster data is stored in _______
+A. Etcd
+B.Kubelet
+C.Kube-apiserver
+D.None of them
+
+ans: A
+
+46.What is an alternative to merging in git?
+A. Basing
+B.Rebasing
+C.Both 1 and 2
+D.None of these
+
+ans: b
+
+47.Command to check the playbook for syntax errors, but it does not execute it.
+
+a. ansible-playbook <playbook.yml> --syntax-check
+b. ansible-playbook <playbook.yml> --check
+c. ansible-playbook <playbook.yml> --list-hosts
+d. ansible-playbook <playbook.yml> --skip-tags
+
+
+48. Which file is used to define dependency in maven?
+a) build.xml
+b) pom.xml
+c) dependency.xml
+d) version.xml
+
+Answer: b
+
+49. Which environment variable is used to specify the path to maven?
+a) JAVA_HOME
+b) PATH
+c) MAVEN_HOME
+d) CLASSPATH
+
+Answer: c
+
+50. Which of below is not a dependency management tool?
+a) Ant
+b) Maven
+c) Gradle
+d) Jenkins
+
+answer: d
+
+
+51. What is difference between kanban and scrum project types in JIRA?
+
+a. They are same
+b. Kanban uses sprints but scrum does not.
+c. Scrum uses sprints but kanban does not.
+d. Scrum is a part of kanban project.
+
+answer: c
+
+52. How to remove the running container without stopping it?
+
+a. docker rm <container-ID>
+b. docker stop <container-ID>
+c. docker reset <container-ID>
+d. docker rm -f <container-ID>
+
+53. How to change the default home location of Jenkins?
+
+a. Using Manage Jenkins --> Global Configuration Tools
+b. Using Manage Jenkins --> Manage Plugins
+c. Using Manage Jenkins --> Manage Node 
+d. Using Manage Jenkins --> Configure system
+
+answer:d
+
+54. How to push the image to the dockerhub repo?
+
+1. Tag with localname and push 
+2. Tag with newname/repo-name and push
+3. Tag with new-name:version and push
+4. Tag with username/repo-name:tag and push
+
+answer: d
+
+55. what is the command to get the last commit ID in git?
+
+a. git reset HEAD
+b. git log --short
+c. git rev-parse HEAD
+d. git commit -v --last
+
+answer: c
+
+56. What is the correct components for declarative pipeline?
+
+a. pipeline agent stages stage steps 
+b. agent stages steps script
+c. pipeling agent stages stage steps end
+d. agent stages script
+
+answer: a
+
+57. How to add packages in docker image using Dockerfile? 
+
+a. CP package name
+b. CMD package name
+c. RUN <Package-install commands>
+d. yum install package-name
+
+answer: c
+
+58. what is poll scm in Jenkins Pipeline?
+
+a. a cronjon
+b. a scheduled way to start build.
+c. a scheduled build to trigger using SCM changes.
+d. a build to be schduled after the previous build succeeded.
+
+answer: c
+
+59. What is pod?
+
+a. container
+b. set of container having the same network
+c. set of container images having the same network 
+d. Both a and b.
+
+60. What are roles in Ansible ?
+
+a. part of main.yaml file mentioned inside task.
+b. part of main.yaml file mentioned outside project directory.
+c. predefined files with defined tasks.
+d. automatically load related vars, files, tasks, handlers, and other Ansible artifacts based on a known file structure
+
+answer: d

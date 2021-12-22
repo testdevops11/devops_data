@@ -1,0 +1,146 @@
+Kubernetes Installation:
+
+
+1. Setting up the basic configuration:
+
+On master:
+
+hostnamectl set-hostname master-node
+
+Step2: setting up local DNS
+
+Note down server ips:
+
+Master node: 3.133.30.251
+worker node: 3.16.20.239
+
+
+# cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+
+3.133.30.251 master-node
+3.16.20.239  worker-node
+
+exit and relogin 
+
+exit
+sudo su -
+
+===> Applicable for cloud platforms ==> Step 3. Opening the ICMP inbound rule to check the ping.
+
+
+Step 3. 
+
+disable SElinux and update your firewall rules.
+
+# setenforce 0
+# sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+# reboot
+
+Step 4. Enabling/Opening the ports for kubernetes communication:
+
+https://kubernetes.io/docs/reference/ports-and-protocols/#control-plane
+https://www.tecmint.com/install-kubernetes-cluster-on-centos-7/
+
+- loading the module and enabling ip forwarding:
+
+# modprobe br_netfilter
+# echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+#
+
+Step 5: Setting up the kubernetes repo:
+
+[root@master-node ~]# cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+ [kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+
+STEP 6: INSTALLING KUBEADM AND DOCKER:
+
+$ yum install kubeadm docker -y
+
+Installed:
+  conntrack-tools-1.4.4-10.el8.x86_64     cri-tools-1.19.0-0.x86_64                   iptables-ebtables-1.8.4-17.el8.x86_64
+  kubeadm-1.23.1-0.x86_64                 kubectl-1.23.1-0.x86_64                     kubelet-1.23.1-0.x86_64
+  kubernetes-cni-0.8.7-0.x86_64           libnetfilter_cthelper-1.0.0-15.el8.x86_64   libnetfilter_cttimeout-1.0.0-11.el8.x86_64
+  libnetfilter_queue-1.0.4-3.el8.x86_64   socat-1.7.4.1-1.el8.x86_64
+
+Complete!
+
+Step 7: Starting the kubelet and docker:
+
+# systemctl enable kubelet
+# systemctl start kubelet
+# systemctl enable docker
+# systemctl start docker
+
+step 8: Kubelet will fail so lets make sure that docker and kubernetes uses the same cgroup driver - systemd driver
+
+
+# cat <<EOF | sudo tee /etc/docker/daemon.json
+ {
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+     "max-size": "100m"
+   },
+   "storage-driver": "overlay2"
+ }
+ EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+
+
+# docker info |grep -i cgroup
+ Cgroup Driver: cgroupfs
+ Cgroup Version: 1
+
+# systemctl restart docker
+
+# docker info |grep -i cgroup
+ Cgroup Driver: systemd
+ Cgroup Version: 1
+
+# swapoff -a
+
+# kubeadm init
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.31.25.186:6443 --token e33hox.0g0mbnreaygghwqx \
+	--discovery-token-ca-cert-hash sha256:77042d7fd450b0cd242002e9e5fa6637824b6b65e23fe5472ec693232ecd1b25
+
+===============================================================
+
+
